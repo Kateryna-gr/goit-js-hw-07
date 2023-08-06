@@ -1,4 +1,4 @@
-import { galleryItems } from './gallery-items.js';
+import { galleryItems } from "./gallery-items.js";
 // Change code below this line
 
 // console.log(galleryItems);
@@ -6,10 +6,14 @@ import { galleryItems } from './gallery-items.js';
 const gallery = document.querySelector(".js-gallery");
 
 const markup = galleryItems
-  .map(({ preview, description }, idx) => `<li class="gallery__item">
-    <img class="gallery__image" data-id="${idx}" src="${preview}" alt="${description}">
-  </li>`
-  ).join("");
+  .map(
+    ({ preview, original, description }) => `<li class="gallery__item">
+      <a class="gallery__link" href="${original}">
+        <img class="gallery__image" src="${preview}" data-source="${original}" alt="${description}" />
+      </a>
+    </li>`
+  )
+  .join("");
 
 gallery.insertAdjacentHTML("beforeend", markup);
 
@@ -20,6 +24,16 @@ function handlerClick(evt) {
     return;
   }
 
-  basicLightbox.create(`<img src="${galleryItems[evt.target.dataset.id].original}" alt="">`)
-    .show();
+  evt.preventDefault();
+
+  const modal = basicLightbox.create(`<img src="${evt.target.dataset.source}" alt="">`);
+  modal.show();
+
+  if (modal.show()) {
+    document.addEventListener("keydown", (evt) => {
+      if (evt.code === "Escape") {
+        modal.close();
+      }
+    });
+  }
 }
